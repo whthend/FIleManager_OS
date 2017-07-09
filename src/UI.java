@@ -13,7 +13,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Created by hongjiayong on 16/6/7.
+ * Created by whthend on 2017/07/03.
  */
 public class UI extends JFrame {
     private JTree tree;
@@ -145,7 +145,7 @@ public class UI extends JFrame {
 
     // Ui
     public UI() throws IOException {
-        setTitle("File System Demo by 1452822 洪嘉勇");
+        setTitle("File System Demo by 计算机1401");
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -169,7 +169,7 @@ public class UI extends JFrame {
         helpPane.setPreferredSize(new Dimension(500, 600));
         JOptionPane.showMessageDialog(null,
                 helpPane,
-                "文件系统模拟",
+                "多用户多级目录文件系统",
                 JOptionPane.DEFAULT_OPTION);
 
         // Create work space
@@ -190,7 +190,7 @@ public class UI extends JFrame {
                 System.exit(0);
             }
             FileWriter writer = new FileWriter(readMe.getPath());
-            writer.write("Hello, this my file system!!!\n");
+            writer.write("Hello, this the file system!!!\n");
             writer.write("Space: 10 * 1024K = 10M\n");
             writer.write("Free-Space Management:bitmap\n");
             writer.write("Store-Space Management:FAT\n");

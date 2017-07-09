@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by hongjiayong on 16/6/7.
+ * Created by whthend on 2017/07/03.
  */
 public class Block {
     private int blockName;
@@ -22,13 +22,13 @@ public class Block {
     private Map<String, int[][] > filesBit = new HashMap<String, int[][]>();
     private ArrayList<File> files = new ArrayList<File>();
 
-    //创建初始盘块
+    //盘块
     public Block(int name, File file, boolean rec) throws IOException {
         blockName = name;
         blockFile = file;
         blockBitMap = new File(blockFile.getPath() + File.separator + blockName + "BitMap&&Fat.txt");//位示图
         recover = new File(blockFile.getPath() + File.separator + "recover.txt");//恢复文件
-        if (!rec) {
+        if (!rec) {//创建或恢复
             space = 0;
             fileNum = 0;
             blockFile.mkdir();//创建目录
@@ -59,12 +59,12 @@ public class Block {
             recoverWriter.flush();
         }else{
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(recover));
+                BufferedReader reader = new BufferedReader(new FileReader(recover));//BufferedReader→字符流缓冲
                 space = Double.parseDouble(reader.readLine());
                 fileNum = Integer.parseInt(reader.readLine());
                 for (int i = 0; i < 32; i++) {
                     for (int k = 0; k < 32; k++) {
-                        if (Integer.parseInt(reader.readLine()) == 0) {
+                        if (Integer.parseInt(reader.readLine()) == 0) {//Integer.parseInt()→将读取的数据转换成int型
                             bitmap[i][k] = 0;
                         } else {
                             bitmap[i][k] = 1;
@@ -74,7 +74,7 @@ public class Block {
                 String temp;
                 while ((temp = reader.readLine()) != null) {
                     File myFile = new File(blockFile.getPath() + File.separator + temp);
-                    files.add(myFile);
+                    files.add(myFile);//？？？
                     int[][] tempBit = new int[32][32];
                     for (int i = 0; i < 32; i++) {
                         for (int k = 0; k < 32; k++) {
@@ -88,7 +88,8 @@ public class Block {
                     filesBit.put(myFile.getName(), tempBit);
                 }
                 reader.close();
-            }catch (Exception e){
+            }
+            catch (Exception e){
                 JOptionPane.showMessageDialog(null, "The files aren't compelete. You can choose another place or delete \"myFileSystem\" in this dir and run this again!",
                 "Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(0);

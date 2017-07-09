@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Vector;
 
 /**
- * Created by hongjiayong on 16/6/7.
+ * Created by whthend on 2017/07/03.
  */
 public class tableModel extends AbstractTableModel {
     private Vector content = null;
