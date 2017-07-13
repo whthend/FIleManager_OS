@@ -14,26 +14,31 @@ extern int	 	inode_num;//当前目录的inode编号
 char* username[] = { "user1", "user2" ,"user3" ,"user4", "user5" ,"user6" ,"user7" ,"user8" };
 char* password[] = { "user1", "user2" ,"user3" ,"user4", "user5" ,"user6" ,"user7" ,"user8" };
 char name[6], pwd[6];
+int j;
 /*登陆函数，判断信息是否匹配，若匹配返回1，否则返回0*/
 int logincheck(char name[6],char pwd[6])
 {
-	int i=0;
+
 	printf("用户名 : ");
 	scanf("%s", name);
-	printf("密码   : ");
+	printf("密  码 : ");
 	scanf("%s", pwd);
-	for (i = 0; i < 8; i++)
+
+	for (int i=0; i < 8; i++)
 	{
 		if (strcmp(name, username[i]) == 0)
+		{
+			j = i;
 			break;
-		else
+		}
+		if(i==7)
 			return 0;
-	}
-	if (strcmp(pwd, password[i]) == 0)
+	}			
+	
+	if (strcmp(pwd, password[j]) == 0)
 	{
 		return 1;
 	}
-		
 	else
 		return 0;
 	
@@ -48,10 +53,10 @@ void loginfill()
 
 int login()
 {
-	int count = 5,i=0,inode; //可输入次数
+	int count = 5; //可输入次数
 	while (count)
 	{
-		if (logincheck(name,pwd) == 1)
+		if (logincheck(name,pwd)== 1)
 			break;
 		else
 		{
@@ -62,7 +67,7 @@ int login()
 
 	if (count != 0)
 	{
-		strcat(path, username[i]);
+		strcat(path, username[j]);
 		if (check_name(inode_num, name)==-1)
 		{
 			make_file(inode_num, name, Directory);

@@ -2,7 +2,7 @@
 #ifndef CONST_H
 #define CONST_H
 
-#define InodeNum		80//i节点数目
+#define InodeNum		1024//i节点数目
 #define BlkNum			(80*1024)//磁盘块的数目
 #define BlkSize			1024//磁盘块大小为1K
 #define BlkPerNode		1024//每个文件包含的最大的磁盘块数目

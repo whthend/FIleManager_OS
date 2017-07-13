@@ -45,34 +45,6 @@ int open_dir(int inode)
 	return 1;
 }
 
-int open_dir_first(int inode)
-{
-	int		i;
-	int 	pos = 0;
-	int 	left;
-	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
-
-	/*读出相应的i节点*/
-	fread(&curr_inode, sizeof(Inode), 1, Disk);
-	//	printf("%d\n",curr_inode.file_size);
-
-	for (i = 0; i<curr_inode.blk_num - 1; ++i) {
-		fseek(Disk, BlockBeg + BlkSize*curr_inode.blk_identifier[i], SEEK_SET);
-		fread(dir_table + pos, sizeof(Dir), DirPerBlk, Disk);
-		pos += DirPerBlk;
-	}
-
-	/*left为最后一个磁盘块内的目录项数*/
-	left = curr_inode.file_size / sizeof(Dir) - DirPerBlk*(curr_inode.blk_num - 1);
-	fseek(Disk, BlockBeg + BlkSize*curr_inode.blk_identifier[i], SEEK_SET);
-	fread(dir_table + pos, sizeof(Dir), left, Disk);
-	pos += left;
-
-	dir_num = pos;
-
-	return 1;
-}
-
 int close_dir(int inode)
 {
 	int i, pos = 0, left;

@@ -16,6 +16,27 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="buff.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="code.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="Compress.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="decode.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="DeCompress.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="Disk.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="man.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="const.h">

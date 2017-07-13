@@ -1,58 +1,58 @@
-man   	NAME      an interface to the on-line reference manuals
-	FORMAT    man    
+man   	功能      
+	格式    man    
 			
-mkfs  	NAME      build a filesystem
-	FORMAT    mkfs
+mkfs  	功能      建立文件系统
+	格式    mkfs
 			
-q       NAME      quit 
-	FORMAT    q
+q       功能      退出 
+	格式    q
 			
-mkdir	NAME      make directories
-	FORMAT    mkdir directory_name
+mkdir	功能      建立文件目录
+	格式    mkdir directory_name
 			
-rmdir   NAME      remove directories
-	FORMAT    rmdir directory_name
+rmdir   功能      删除文件目录
+	格式    rmdir directory_name
 			
-cd      NAME      change directory
-	FORMAT    cd directory_name
+cd      功能      跳转文件目录
+	格式    cd directory_name
 			
-ls  	NAME      list directory contents
-	FORMAT    ls
+ls  	功能      列出文件目录
+	格式    ls
 			
-touch   NAME      create an empty file
-	FORMAT    touch file_name
+touch   功能      建立空文件
+	格式    touch file_name
 			
-rm	NAME      remove a file
-	FORMAT    rm file_name
+rm	功能      删除文件
+	格式    rm file_name
 			
-vi   	NAME      edit a file
-	FORMAT    vi file_name
+vi   	功能      编辑文件
+	格式    vi file_name
 			
-cp	NAME      copy a file
-	FORMAT    cp source_file_name dest_file_name
+cp	功能      复制文件
+	格式    cp source_file_name dest_file_name
 		  cp source_file_name dest_directory_name
 					  
-mv	NAME      move a file
-	FORMAT    mv source_file_name dest_file_name
+mv	功能      移动文件
+	格式    mv source_file_name dest_file_name
 		  mv source_file_name dest_directory_name
 					  
-stat    NAME      display file or file system status
-	FORMAT    stat file_name
+stat    功能      展示文件或者目录
+	格式    stat file_name
 		  stat directory_name
 					  
-chmod   NAME      change file mode bits
-	FORMAT    chmod +r/-r file_name/directory_name
+chmod   功能      更改文件权限
+	格式    chmod +r/-r file_name/directory_name
 		  chmod +w/-w file_name/directory_name
 		  chmod +x/-x file_name/directory_name		
 					  
-zip     NAME      package and compress (archive) files
-	FORMAT    zip zip_file_name source_file_name
+zip     功能      打包并压缩文件
+	格式    zip zip_file_name source_file_name
 			
-unzip	NAME      extract compressed files in a ZIP archive
-	FORMAT    unzip file_name
+unzip	功能      解压缩文件
+	格式    unzip file_name
 
-df      NAME	  report file system disk space usage
-	FORMAT    df
+df      功能	  报告文件系统盘块使用情况
+	格式    df
 
-ps  	NAME      process management
-	FORMAT    ps
+ps  	功能      进程管理
+	格式    ps

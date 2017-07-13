@@ -698,6 +698,11 @@ int temp_file_read(char* name)//读取文件信息，生成临时文件，供进程执行使用
 	return 0;
 }
 
+int exec(char * name)
+{
+	return 0;
+}
+
 void show_manual()//打印帮助手册
 {
 	FILE *fp = NULL; 

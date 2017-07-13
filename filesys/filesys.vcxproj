@@ -143,6 +143,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="buff.txt" />
+    <Text Include="code.txt" />
+    <Text Include="Compress.txt" />
+    <Text Include="decode.txt" />
+    <Text Include="DeCompress.txt" />
+    <Text Include="Disk.txt" />
+    <Text Include="man.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
