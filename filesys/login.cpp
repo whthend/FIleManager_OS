@@ -31,7 +31,6 @@ int logincheck(char name[6],char pwd[6])
 	}
 	if (strcmp(pwd, password[i]) == 0)
 	{
-		printf("succeses");
 		return 1;
 	}
 		
@@ -67,15 +66,14 @@ int login()
 		if (check_name(inode_num, name)==-1)
 		{
 			make_file(inode_num, name, Directory);
-			//printf("succeses");
 		}
-		if (enter_dir(name) == -1) {
+		if (enter_dir_first(name) == -1) {
 			printf("'%s'用户根目录打开失败\n", name);
 			return 0;
 		}
 		else
 		{
-			printf("\n成功登陆！");
+			printf("\n成功登陆！\n");
 		}
 	}
 	else

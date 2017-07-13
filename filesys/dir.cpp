@@ -377,6 +377,33 @@ int enter_dir(char* name)
 	}
 	return 0;
 }
+int enter_dir_first(char* name)
+{
+	int tmp = inode_num;//记录原始inode节点
+	char tmpPath[40], nameCopy[30];
+	char dst[30][NameLength];
+
+	strcpy(tmpPath, path);
+	strcpy(nameCopy, name);
+	int cnt = split(dst, nameCopy, "/");
+	if (name[0] == '/') {//从根目录开始
+						 //printf("1111111111\n");
+		close_dir(inode_num);
+		inode_num = 0;
+		open_dir(inode_num);
+		strcpy(path, "monitor@root:");
+	}
+	for (int i = 0; i < cnt; i++) {
+		int res = enter_child_dir(inode_num, dst[i]);
+		if (res == -1) {
+			inode_num = tmp;
+			open_dir(inode_num);
+			strcpy(path, tmpPath);
+			return -1;
+		}
+	}
+	return 0;
+}
 
 int remove_file(int inode, char* name, int deepth, int type)
 {

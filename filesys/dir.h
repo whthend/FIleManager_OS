@@ -15,6 +15,7 @@ int del_file(int, char*, int);//É¾³ı×ÓÄ¿Â¼»ò×ÓÎÄ¼ş, remove_fileµÄ×Ó³ÌĞò£¬²»º¬´íÎ
 int remove_file(int inode, char* name, int deepth, int type);//É¾³ı×ÓÄ¿Â¼»ò×ÓÎÄ¼ş
 int enter_child_dir(int, char*);//½øÈë×ÓÄ¿Â¼
 int enter_dir(char* name);//½øÈëÈÎÒâÄ¿Â¼
+int enter_dir_first(char* name);
 int adjust_dir(char*);//É¾³ı×ÓÄ¿Â¼ºó£¬µ÷ÕûÔ­Ä¿Â¼£¬Ê¹ÖĞ¼äÎŞ¿ÕÏ¶
 void color(const unsigned short color1);//ÉèÖÃÊä³ö×Ö·ûÑÕÉ«
 

@@ -1,6 +1,3 @@
-// filesys.cpp : 定义控制台应用程序的入口点。
-//
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,14 +27,9 @@ FILETIME BuffModifyTimeAfterEdit;
 char*	command[] = { "mkfs","q","mkdir","rmdir","cd","ls","touch","rm","vi",
 "cp","mv", "stat", "chmod", "zip", "unzip", "man", "df", "ps" };
 char	path[40] = "FS@";
-//char* username[] = { "user1", "user2" ,"user3" ,"user4", "user5" ,"user6" ,"user7" ,"user8" };
-//char* password[] = { "user1", "user2" ,"user3" ,"user4", "user5" ,"user6" ,"user7" ,"user8" };
-//char name[6], pwd[6];
 
 int commander();
-//int logincheck(char name[6], char pwd[6]);
-//void loginfill();
-//int login();
+
 int main()
 {
 	Disk = fopen(DISK, "rb+");
