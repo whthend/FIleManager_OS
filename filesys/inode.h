@@ -8,7 +8,7 @@ typedef struct {
 	int blk_identifier[BlkPerNode];//占用的磁盘块编号
 	int blk_num;//占用的磁盘块数目
 	int file_size;//文件的大小
-	int type;//文件的类型
+	int type;//文件的类型 1：文件目录 0：文件
 	int access[3][9] = { {0,0,0,0,0,0,0,0,1},{ 0,0,0,0,0,0,0,0,1 } ,{ 0,0,0,0,0,0,0,0,1 } };//用户权限
 	time_t i_atime;//最后访问时间
 	time_t i_mtime;//最后修改(modify)时间
