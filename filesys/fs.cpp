@@ -13,7 +13,7 @@ extern Inode 	curr_inode;//当前目录的inode结构
 extern SuperBlk	super_blk;//文件系统的超级块
 extern FILE*	Disk;
 extern char	path[40];
-
+extern char		path_first[40];
 int init_fs(void)
 {
 	fseek(Disk, SuperBeg, SEEK_SET);
@@ -60,13 +60,31 @@ int format_fs(void)
 	curr_inode.blk_num = 1;
 	curr_inode.blk_identifier[0] = 0;//第零块磁盘一定是根目录的
 	curr_inode.type = Directory;
-	curr_inode.access[0] = 1;//可读
-	curr_inode.access[1] = 1;//可写
-	curr_inode.access[2] = 1;//可执行
+	
 	curr_inode.i_atime = time(NULL);
 	curr_inode.i_ctime = time(NULL);
 	curr_inode.i_mtime = time(NULL);
-
+	//curr_inode.access[0] = 1;//可读
+	//curr_inode.access[1] = 1;//可写
+	//curr_inode.access[2] = 1;//可执行
+	//curr_inode.user[0] = 1;//用户可读
+	//curr_inode.user[1] = 1;
+	//curr_inode.user[2] = 1;
+	//curr_inode.user[3] = 1;
+	//curr_inode.user[4] = 1;
+	//curr_inode.user[5] = 1;
+	//curr_inode.user[6] = 1;
+	//curr_inode.user[7] = 1;
+	//curr_inode.user[8] = 1;
+	//读写控制表，二维
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 9; j++)
+		{
+			curr_inode.access[i][j]=1;
+			/*printf("%d", curr_inode.access[i][j]);*/
+		}
+		/*printf("\n");*/
+	}
 	fseek(Disk, InodeBeg, SEEK_SET);
 	fwrite(&curr_inode, sizeof(Inode), 1, Disk);
 
@@ -77,7 +95,7 @@ int format_fs(void)
 	strcpy(dir_table[1].name, "..");
 	dir_table[1].inode_num = 0;
 
-	strcpy(path, "monster@root:");
+	strcpy(path, path_first);
 
 	return 1;
 }

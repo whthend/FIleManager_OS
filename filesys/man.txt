@@ -1,58 +1,24 @@
-man   	功能      
-	格式    man    
-			
-mkfs  	功能      建立文件系统
-	格式    mkfs
-			
-q       功能      退出 
-	格式    q
-			
-mkdir	功能      建立文件目录
-	格式    mkdir directory_name
-			
-rmdir   功能      删除文件目录
-	格式    rmdir directory_name
-			
-cd      功能      跳转文件目录
-	格式    cd directory_name
-			
-ls  	功能      列出文件目录
-	格式    ls
-			
-touch   功能      建立空文件
-	格式    touch file_name
-			
-rm	功能      删除文件
-	格式    rm file_name
-			
-vi   	功能      编辑文件
-	格式    vi file_name
-			
-cp	功能      复制文件
-	格式    cp source_file_name dest_file_name
-		  cp source_file_name dest_directory_name
-					  
-mv	功能      移动文件
-	格式    mv source_file_name dest_file_name
-		  mv source_file_name dest_directory_name
-					  
-stat    功能      展示文件或者目录
-	格式    stat file_name
-		  stat directory_name
-					  
-chmod   功能      更改文件权限
-	格式    chmod +r/-r file_name/directory_name
-		  chmod +w/-w file_name/directory_name
-		  chmod +x/-x file_name/directory_name		
-					  
-zip     功能      打包并压缩文件
-	格式    zip zip_file_name source_file_name
-			
-unzip	功能      解压缩文件
-	格式    unzip file_name
-
-df      功能	  报告文件系统盘块使用情况
-	格式    df
-
-ps  	功能      进程管理
-	格式    ps
+man     → 帮助                  格式    man    	
+mkfs    → 建立文件系统          格式    mkfs		
+mkdir   → 建立文件目录          格式    mkdir directory_name		
+rmdir   → 删除文件目录          格式    rmdir directory_name				
+cd      → 跳转文件目录          格式    cd directory_name	
+cf  	→ 返回上层文件夹        格式    cf ../				
+ls      → 列出文件目录          格式    ls				
+touch   → 建立空文件            格式    touch file_name				
+rm      → 删除文件              格式    rm file_name				
+vi   	→ 编辑文件              格式    vi file_name				
+cp      → 复制文件              格式    cp source_file_name dest_file_name
+                                         cp source_file_name dest_directory_name						  
+mv      → 移动文件              格式    mv source_file_name dest_file_name
+                                         mv source_file_name dest_directory_name						  
+stat    → 展示文件或者目录      格式    stat file_name
+                                         stat directory_name					  
+chmod   → 更改文件权限          格式    chmod +r/-r file_name/directory_name
+                                         chmod +w/-w file_name/directory_name
+                                         chmod +x/-x file_name/directory_name		  		  
+zip     → 打包并压缩文件        格式    zip zip_file_name source_file_name	
+unzip	→ 解压缩文件            格式    unzip file_name	
+df      → 盘块使用情况	         格式    df	
+q       → 退出                  格式    q	
+	

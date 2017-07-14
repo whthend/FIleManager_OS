@@ -8,6 +8,7 @@
 
 extern SuperBlk	super_blk;//文件系统的超级块
 extern FILE*	Disk;
+extern int		user_num;
 
 /*申请inode*/
 int apply_inode()
@@ -51,18 +52,25 @@ int init_file_inode(int inode)
 {
 	Inode temp;
 	/*读取相应的Inode*/
-	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
-	fread(&temp, sizeof(Inode), 1, Disk);
+	//fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
+	//fread(&temp, sizeof(Inode), 1, Disk);
 
 	temp.blk_num = 0;
 	temp.type = File;
 	temp.file_size = 0;
-	temp.access[0] = 1;//可读
-	temp.access[1] = 1;//可写
-	temp.access[2] = 0;//不可执行
+	temp.access[0][user_num] = 1;//可读
+	temp.access[1][user_num] = 1;//可写
+	temp.access[2][user_num] = 0;//不可执行
 	temp.i_atime = time(NULL);
 	temp.i_ctime = time(NULL);
 	temp.i_mtime = time(NULL);
+	//for (int i = 0; i < 3; i++) {
+	//	for (int j = 0; j < 9; j++)
+	//	{
+	//		printf("%d", temp.access[i][j]);
+	//	}
+	//	printf("\n");
+	//}
 
 	/*将已经初始化的Inode写回*/
 	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
@@ -79,8 +87,8 @@ int init_dir_inode(int child, int father)
 	Dir 	dot[2];
 	int		blk_pos;
 
-	fseek(Disk, InodeBeg + sizeof(Inode)*child, SEEK_SET);
-	fread(&temp, sizeof(Inode), 1, Disk);
+	/*fseek(Disk, InodeBeg + sizeof(Inode)*child, SEEK_SET);
+	fread(&temp, sizeof(Inode), 1, Disk);*/
 
 	blk_pos = get_blk();//获取新磁盘块的编号
 
@@ -89,14 +97,21 @@ int init_dir_inode(int child, int father)
 	temp.type = Directory;
 	//printf("temp.type = %d\n", temp.type);
 	temp.file_size = 2 * sizeof(Dir);
-	temp.access[0] = 1;//可读
-	temp.access[1] = 1;//可写
-	temp.access[2] = 1;//可执行
+	temp.access[0][user_num] = 1;//可读
+	temp.access[1][user_num] = 1;//可写
+	temp.access[2][user_num] = 1;//可执行
 	temp.i_atime = time(NULL);
 	temp.i_ctime = time(NULL);
 	temp.i_mtime = time(NULL);
 
-	/*将初始化完毕的Inode结构写回*/
+	//for (int i = 0; i < 3; i++) {
+	//	for (int j = 0; j < 9; j++)
+	//	{
+	//		printf("%d", temp.access[i][j]);
+	//	}
+	//	printf("\n");
+	//}
+
 	fseek(Disk, InodeBeg + sizeof(Inode)*child, SEEK_SET);
 	fwrite(&temp, sizeof(Inode), 1, Disk);
 

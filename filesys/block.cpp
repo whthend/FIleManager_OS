@@ -3,8 +3,9 @@
 #include <stdio.h>
 
 extern SuperBlk	super_blk;//文件系统的超级块
+
 /*申请未被使用的磁盘块*/
-int get_blk()
+int get_blk()//
 {
 	int i;
 	super_blk.blk_used++;

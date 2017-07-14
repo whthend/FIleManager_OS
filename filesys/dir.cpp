@@ -9,24 +9,26 @@
 #include "path.h"
 #include "block.h"
 
-extern Dir 	dir_table[MaxDirNum];//将当前目录文件的内容都载入内存
-extern int 	dir_num;//相应编号的目录项数
+extern Dir 		dir_table[MaxDirNum];//将当前目录文件的内容都载入内存
+extern int 		dir_num;//相应编号的目录项数
 extern int	 	inode_num;//当前目录的inode编号
 extern Inode 	curr_inode;//当前目录的inode结构
 extern SuperBlk	super_blk;//文件系统的超级块
 extern FILE*	Disk;
-extern char	path[40];
+extern char		path[40];
+extern int		user_num;
+extern char		path_first[40];
+extern int		login_suc;
 
+/*打开目录*/
 int open_dir(int inode)
-{
+{	
 	int		i;
 	int 	pos = 0;
 	int 	left;
 	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
-
 	/*读出相应的i节点*/
 	fread(&curr_inode, sizeof(Inode), 1, Disk);
-	//	printf("%d\n",curr_inode.file_size);
 
 	for (i = 0; i<curr_inode.blk_num - 1; ++i) {
 		fseek(Disk, BlockBeg + BlkSize*curr_inode.blk_identifier[i], SEEK_SET);
@@ -44,6 +46,8 @@ int open_dir(int inode)
 
 	return 1;
 }
+
+
 
 int close_dir(int inode)
 {
@@ -84,9 +88,9 @@ int make_file(int inode, char* name, int type)
 	strcpy(original_name_path, name);
 	if (eat_path(name) == -1) {
 		if (type == File)
-			printf("touch: cannot touch‘%s’: No such file or directory\n", original_name_path);
+			printf("错误：无法创建文件：‘%s’: No such file or directory\n", original_name_path);
 		if (type == Directory)
-			printf("mkdir: cannot create directory ‘%s’: No such file or directory\n", original_name_path);
+			printf("错误：无法创建文件夹‘%s’: No such file or directory\n", original_name_path);
 		return -1;
 	}
 
@@ -99,11 +103,11 @@ int make_file(int inode, char* name, int type)
 	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
 	fread(&temp, sizeof(Inode), 1, Disk);
 
-	if (temp.access[1] == 0) { //当前目录不允许写
+	if (temp.access[1][user_num] == 0) { //当前目录不允许写
 		if (type == Directory)
-			printf("mkdir: cannot create directory ‘%s’: Permission denied\n", original_name_path);
+			printf("错误：无法创建目录‘%s’: 权限不足\n", original_name_path);
 		if (type == File)
-			printf("touch: cannot touch ‘%s’: Permission denied\n", original_name_path);
+			printf("错误：无法创建文件‘%s’: 权限不足\n", original_name_path);
 		close_dir(inode_num);
 		inode_num = original_inode;
 		open_dir(inode_num);
@@ -193,7 +197,7 @@ int show_dir(int inode)
 	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
 	fread(&temp, sizeof(Inode), 1, Disk);
 
-	if (temp.access[0] == 0) { //目录无读写权限
+	if (temp.access[0][user_num] == 0) { //目录无读写权限
 		printf("ls: cannot open directory .: Permission denied\n");
 		return -1;
 	}
@@ -214,7 +218,7 @@ int show_dir(int inode)
 			color(12);
 			printf("%s\t", dir_table[i].name);
 		}
-		else if (tempInode.access[2] == 1){
+		else if (tempInode.access[2][user_num] == 1){
 			color(10);
 			printf("%s\t", dir_table[i].name);
 		}
@@ -231,17 +235,68 @@ int show_dir(int inode)
 }
 
 
-
-/*进入子目录*/
-int enter_child_dir(int inode, char* name)
+int enter_dir(char* name)
 {
-	if (type_check(name) != Directory) {
+	int tmp = inode_num;//记录原始inode节点
+	char tmpPath[40], nameCopy[30];
+	char dst[30][NameLength];
+	Inode temp;
+	fseek(Disk, InodeBeg + sizeof(Inode)*inode_num, SEEK_SET);
+	fread(&temp, sizeof(Inode), 1, Disk);
+	printf("%d\n", temp.access[0][user_num]);
+	if (temp.access[0][user_num] == 0) { //目录无读写权限
+		printf("错误: 无法打开目录: Permission denied\n");
 		return -1;
 	}
 
+
+	strcpy(tmpPath, path);
+	strcpy(nameCopy, name);
+	int cnt = split(dst, nameCopy, "/");
+	if (name[0] == '/') {//从根目录开始
+		close_dir(inode_num);
+		inode_num = 0;
+		open_dir_new(inode_num);
+		strcpy(path, path_first);
+	}
+	for (int i = 0; i < cnt; i++) {
+		//printf("%d\n", i);
+		int res = enter_child_dir(inode_num, dst[i]);
+		change_path(dst[i]);
+		if (res == -1) {
+			inode_num = tmp;
+			open_dir_new(inode_num);
+			strcpy(path, tmpPath);
+			return -1;
+		}
+	}
+	return 0;
+}
+/*进入子目录*/
+int enter_child_dir(int inode, char* name)
+{
+	//printf("%d\n", inode);
 	int child;
 	child = check_name(inode, name);
 
+	if (type_check(name) != Directory) {
+		return -1;
+	}
+	Inode	temp;
+	fseek(Disk, InodeBeg + sizeof(Inode)*child, SEEK_SET);
+	fread(&temp, sizeof(Inode), 1, Disk);
+	//printf("%d\n", inode);
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 9; j++)
+		{
+			printf("%d", temp.access[i][j]);
+		}
+		printf("\n");
+	}
+	if (temp.access[0][user_num] ==0) {
+		printf("警告：没有访问权限！\n");
+		return 0;
+	}
 	/*关闭当前目录,进入下一级目录*/
 	close_dir(inode);
 	inode_num = child;
@@ -320,35 +375,37 @@ int del_file(int inode, char* name, int deepth)
 	return 1;
 }
 
-int enter_dir(char* name)
-{
-	int tmp = inode_num;//记录原始inode节点
-	char tmpPath[40], nameCopy[30];
-	char dst[30][NameLength];
 
-	strcpy(tmpPath, path);
-	strcpy(nameCopy, name);
-	int cnt = split(dst, nameCopy, "/");
-	if (name[0] == '/') {//从根目录开始
-		 //printf("1111111111\n");
-		close_dir(inode_num);
-		inode_num = 0;
-		open_dir(inode_num);
-		strcpy(path, "monitor@root:");
+int open_dir_new(int inode)
+{
+	int		i;
+	int 	pos = 0;
+	int 	left;
+	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
+	/*读出相应的i节点*/
+	fread(&curr_inode, sizeof(Inode), 1, Disk);
+	if (curr_inode.access[0][user_num] == 0) {
+		printf("警告：没有访问权限！");
+		return 0;
 	}
-	for (int i = 0; i < cnt; i++) {
-		//printf("%d\n", i);
-		int res = enter_child_dir(inode_num, dst[i]);
-		change_path(dst[i]);
-		if (res == -1) {
-			inode_num = tmp;
-			open_dir(inode_num);
-			strcpy(path, tmpPath);
-			return -1;
-		}
+
+	for (i = 0; i<curr_inode.blk_num - 1; ++i) {
+		fseek(Disk, BlockBeg + BlkSize*curr_inode.blk_identifier[i], SEEK_SET);
+		fread(dir_table + pos, sizeof(Dir), DirPerBlk, Disk);
+		pos += DirPerBlk;
 	}
-	return 0;
+
+	/*left为最后一个磁盘块内的目录项数*/
+	left = curr_inode.file_size / sizeof(Dir) - DirPerBlk*(curr_inode.blk_num - 1);
+	fseek(Disk, BlockBeg + BlkSize*curr_inode.blk_identifier[i], SEEK_SET);
+	fread(dir_table + pos, sizeof(Dir), left, Disk);
+	pos += left;
+
+	dir_num = pos;
+
+	return 1;
 }
+
 int enter_dir_first(char* name)
 {
 	int tmp = inode_num;//记录原始inode节点
@@ -359,11 +416,10 @@ int enter_dir_first(char* name)
 	strcpy(nameCopy, name);
 	int cnt = split(dst, nameCopy, "/");
 	if (name[0] == '/') {//从根目录开始
-						 //printf("1111111111\n");
 		close_dir(inode_num);
 		inode_num = 0;
 		open_dir(inode_num);
-		strcpy(path, "monitor@root:");
+		strcpy(path, path_first);
 	}
 	for (int i = 0; i < cnt; i++) {
 		int res = enter_child_dir(inode_num, dst[i]);
@@ -408,7 +464,7 @@ int remove_file(int inode, char* name, int deepth, int type)
 	fseek(Disk, InodeBeg + sizeof(Inode)*inode_num, SEEK_SET);
 	fread(&father_inode, sizeof(father_inode), 1, Disk);
 
-	if (father_inode.access[1] == 0) { //要删除的目录或文件的父目录不允许写
+	if (father_inode.access[1][user_num] == 0) { //要删除的目录或文件的父目录不允许写
 		if (type == Directory)
 			printf("rmdir: failed to remove ‘%s’: Permission denied\n", original_name_path);
 		if (type == File)

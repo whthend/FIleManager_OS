@@ -17,16 +17,20 @@
 Dir 	dir_table[MaxDirNum];//将当前目录文件的内容都载入内存
 int 	dir_num;//相应编号的目录项数
 int	 	inode_num;//当前目录的inode编号
+int		user_num;//当前用户编号
+//int		user_power;//root授权用户号
 FILE*	Disk;
 Inode 	curr_inode;//当前目录的inode结构
 SuperBlk	super_blk;//文件系统的超级块
 FILETIME BuffModifyTimeBeforeEdit;
 FILETIME BuffModifyTimeAfterEdit;
 
+
 /*指令集合*/
 char*	command[] = { "mkfs","q","mkdir","rmdir","cd","ls","touch","rm","vi",
-"cp","mv", "stat", "chmod", "zip", "unzip", "man", "df", "ps" };
+"cp","mv", "stat", "chmod", "zip", "unzip", "man", "df", "cf" };
 char	path[40] = "FS@";
+char	path_first[40];
 
 int commander();
 
@@ -41,6 +45,8 @@ int main()
 	init_fs();
 	if (login() == 1)
 	{
+		strcpy(path_first,path);
+		printf("%d\n",user_num);
 		commander();
 	}
 
@@ -91,10 +97,10 @@ int	commander()
 			remove_file(inode_num, name, 0, Directory);
 			break;
 
-			/*进入目录*/
+			/*进入子目录*/
 		case 4:
 			scanf("%s", name);
-			if (enter_dir(name) == -1) {
+			if (enter_child_dir(inode_num,name) == -1) {
 				printf("cd: '%s': No such file or directory\n", name);
 			}
 			break;
@@ -171,7 +177,10 @@ int	commander()
 
 			/*进程管理*/
 		case 17:
-
+			scanf("%s", name);
+			if (enter_dir(name) == -1) {
+				printf("cd: '%s': No such file or directory\n", name);
+			}
 			break;
 
 		default:

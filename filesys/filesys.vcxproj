@@ -173,6 +173,7 @@
     <ClCompile Include="login.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="path.cpp" />
+    <ClCompile Include="test.cpp" />
     <ClCompile Include="zip.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -8,6 +8,7 @@ typedef struct {
 }Dir;
 
 int open_dir(int);//打开相应inode对应的目录
+int open_dir_new(int inode);
 int close_dir(int);//保存相应inode的目录
 int show_dir(int);//显示目录
 int make_file(int, char*, int);//创建新的目录或文件

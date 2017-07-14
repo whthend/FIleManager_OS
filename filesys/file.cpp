@@ -9,13 +9,14 @@
 #include "superblk.h"
 #include "block.h"
 
-extern Dir 	dir_table[MaxDirNum];//将当前目录文件的内容都载入内存
+extern Dir		dir_table[MaxDirNum];//将当前目录文件的内容都载入内存
 extern int	 	inode_num;//当前目录的inode编号
 extern FILE*	Disk;
-extern int 	dir_num;//相应编号的目录项数
-extern char	path[40];
+extern int 		dir_num;//相应编号的目录项数
+extern char		path[40];
 extern FILETIME BuffModifyTimeBeforeEdit;
 extern FILETIME BuffModifyTimeAfterEdit;
+extern int		user_num;
 
 FILETIME getBuffModifyTime();//获取临时文件的文件修改时间
 /*读文件函数*/
@@ -33,7 +34,7 @@ int file_read(char* name)
 	fread(&temp, sizeof(Inode), 1, Disk);
 
 	int file_size = temp.file_size;
-	if (temp.access[0] == 0) { //文件不可读，则直接退出
+	if (temp.access[0][user_num] == 0) { //文件不可读，则直接退出
 		return -1;
 	}
 	if (temp.blk_num == 0) {//如果源文件没有内容,则直接退出
@@ -83,8 +84,8 @@ int file_write(char* name)
 	fseek(Disk, InodeBeg + sizeof(Inode)*inode, SEEK_SET);
 	fread(&temp, sizeof(Inode), 1, Disk);
 
-	if (temp.access[1] == 0) { //文件不可写
-		printf("%d\n", temp.access[1]);
+	if (temp.access[1][user_num] == 0) { //文件不可写
+		printf("%d\n", temp.access[1][user_num]);
 		return -1;
 	}
 
@@ -193,7 +194,7 @@ int file_copy(char* name, char* cpname)
 			fseek(Disk, InodeBeg + sizeof(Inode)*dest_inode_num, SEEK_SET);
 			fread(&temp, sizeof(Inode), 1, Disk);
 
-			if (temp.access[1] == 0) { //目标目录不可写
+			if (temp.access[1][user_num] == 0) { //目标目录不可写
 				printf("cp: cannot create regular file ‘%s’: Permission denied\n", originalCpNamePath);
 				close_dir(inode_num);
 				inode_num = originalInode;
@@ -234,7 +235,7 @@ int file_copy(char* name, char* cpname)
 			fseek(Disk, InodeBeg + sizeof(Inode)*inode_num, SEEK_SET);
 			fread(&temp, sizeof(Inode), 1, Disk);
 
-			if (temp.access[1] == 0) { //目标目录不可写
+			if (temp.access[1][user_num] == 0) { //目标目录不可写
 				printf("cp: cannot create regular file ‘./%s’: Permission denied\n", name);
 				close_dir(inode_num);
 				inode_num = originalInode;
@@ -307,7 +308,7 @@ int file_move(char* name, char* mvname)
 	fseek(Disk, InodeBeg + sizeof(Inode)*source_inode_num, SEEK_SET);
 	fread(&temp, sizeof(Inode), 1, Disk);
 
-	if (temp.access[1] == 0) { //原文件目录不可写
+	if (temp.access[1][user_num] == 0) { //原文件目录不可写
 		if (type_check(mvname) == Directory)
 			printf("mv: cannot move ‘%s’ to ‘%s/%s’: Permission denied\n", originalNamePath, originalMvNamePath, name);
 		else 
@@ -325,7 +326,7 @@ int file_move(char* name, char* mvname)
 		fseek(Disk, InodeBeg + sizeof(Inode)*dest_inode_num, SEEK_SET);
 		fread(&temp, sizeof(temp), 1, Disk);
 
-		if (temp.access[1] == 0) { //b.txt的父目录不可写
+		if (temp.access[1][user_num] == 0) { //b.txt的父目录不可写
 			printf("mv: cannot move ‘%s’ to ‘%s’: Permission denied\n", originalNamePath, originalMvNamePath);
 			close_dir(inode_num);
 			inode_num = originalInode;
@@ -397,7 +398,7 @@ int file_move(char* name, char* mvname)
 			fseek(Disk, InodeBeg + sizeof(Inode)*inode_num, SEEK_SET);
 			fread(&temp, sizeof(Inode), 1, Disk);
 
-			if (temp.access[1] == 0) { //b.txt不可写
+			if (temp.access[1][user_num] == 0) { //b.txt不可写
 				printf("mv: cannot move ‘%s’ to ‘%s/%s’: Permission denied\n", originalNamePath, originalMvNamePath, name);
 				close_dir(inode_num);
 				inode_num = originalInode;
@@ -456,9 +457,9 @@ int show_file_info(char* name)
 
 	printf("Inode: %d\t", inode);
 	printf("Access: ");
-	temp.access[0] ? printf("r") : printf("-");
-	temp.access[1] ? printf("w") : printf("-");
-	temp.access[2] ? printf("x") : printf("-");
+	temp.access[0][user_num] ? printf("r") : printf("-");
+	temp.access[1][user_num] ? printf("w") : printf("-");
+	temp.access[2][user_num] ? printf("x") : printf("-");
 	printf("\n");
 	printf("Access: %s", ctime(&temp.i_atime));
 	printf("Modify: %s", ctime(&temp.i_mtime));
@@ -470,6 +471,7 @@ int show_file_info(char* name)
 	return 0;
 }
 
+/*修改文件读写权限*/
 int change_mode(char* parameter, char* name)
 {
 	int inode;
@@ -495,27 +497,27 @@ int change_mode(char* parameter, char* name)
 	fread(&temp, sizeof(Inode), 1, Disk);
 
 	if (strcmp(parameter, "+r") == 0) {
-		temp.access[0] = 1;
+		temp.access[0][user_num] = 1;
 		temp.i_ctime = time(NULL);
 	}
 	else if (strcmp(parameter, "-r") == 0) {
-		temp.access[0] = 0;
+		temp.access[0][user_num] = 0;
 		temp.i_ctime = time(NULL);
 	}
 	else if (strcmp(parameter, "+w") == 0) {
-		temp.access[1] = 1;
+		temp.access[1][user_num] = 1;
 		temp.i_ctime = time(NULL);
 	}
 	else if (strcmp(parameter, "-w") == 0) {
-		temp.access[1] = 0;
+		temp.access[1][user_num] = 0;
 		temp.i_ctime = time(NULL);
 	}
 	else if (strcmp(parameter, "+x") == 0) {
-		temp.access[2] = 1;
+		temp.access[2][user_num] = 1;
 		temp.i_ctime = time(NULL);
 	}
 	else if (strcmp(parameter, "-x") == 0) {
-		temp.access[2] = 0;
+		temp.access[2][user_num] = 0;
 		temp.i_ctime = time(NULL);
 	}
 	else {
@@ -656,11 +658,11 @@ int temp_file_read(char* name)//读取文件信息，生成临时文件，供进程执行使用
 
 	int file_size = temp.file_size;
 
-	if (temp.access[0] == 0) { //文件不可读，则直接退出，返回-1
+	if (temp.access[0][user_num] == 0) { //文件不可读，则直接退出，返回-1
 		return -1;
 	}
 
-	if (temp.access[2] == 0) { //文件不可执行，则返回-2
+	if (temp.access[2][user_num] == 0) { //文件不可执行，则返回-2
 		return -2;
 	}
 
